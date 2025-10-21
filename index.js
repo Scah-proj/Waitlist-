@@ -1,6 +1,6 @@
 
 const ENV = {
-  WAITLIST_API_URL: "https://scahwaitist.onrender.com/api/waitlist",
+  WAITLIST_API_URL: "https://scah-backend.onrender.com/api/waitlist",
 };
 const form = document.getElementById("waitlist-form");
 const message = document.getElementById("message");
@@ -51,7 +51,7 @@ form.addEventListener("submit", async (e) => {
 
     if (res.ok) {
       message.textContent =
-        "✅ Success! " + (data.message || "You've joined the waitlist.");
+        " Success! " + (data.message || "You've joined the waitlist.");
       message.style.color = "green";
       form.reset();
     } else if (data.message && data.message.toLowerCase().includes("exists")) {
