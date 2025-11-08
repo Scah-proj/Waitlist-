@@ -54,12 +54,12 @@ form.addEventListener("submit", async (e) => {
         " Success! " + (data.message || "You've joined the waitlist.");
       message.style.color = "green";
       form.reset();
-    } else if (data.message && data.message.toLowerCase().includes("exists")) {
+    } else if (data.error && data.error.message.toLowerCase().includes("waitlist")) {
       message.textContent = "⚠️ This email is already on the waitlist.";
       message.style.color = "orange";
     } else {
       message.textContent =
-        "❌ Error: " + (data.message || "Something went wrong.");
+        "❌ Error: " + (data.error?.message || "Something went wrong.");
       message.style.color = "red";
     }
   } catch (err) {
