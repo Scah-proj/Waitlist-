@@ -1,38 +1,73 @@
+
+const ENV = {
+  WAITLIST_API_URL: "https://scah-backend.onrender.com/api/waitlist",
+};
 const form = document.getElementById("waitlist-form");
 const message = document.getElementById("message");
+const submitBtn = form.querySelector("button"); 
+
 form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const role = document.getElementById("role").value;
-    
-    const email = document.getElementById("email").value;
+  const role = document.getElementById("role").value.trim();
+  const email = document.getElementById("email").value.trim();
 
+  message.textContent = "";
+  message.style.color = "";
 
-    if (!role || !email) {
-      alert("Please select a role and enter your email.");
-      return;
-    }
+  if (!role || !email) {
+    message.textContent = "⚠️ Please select a role and enter your email.";
+    message.style.color = "red";
+    return;
+  }
 
-    try {
-      const res = await fetch("https://scahtest1-production.up.railway.app/API/waitlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ role, email })
-      });
+  const validRoles = ["Athlete", "Scout"];
+  if (!validRoles.includes(role)) {
+    message.textContent = "⚠️ Invalid role selected.";
+    message.style.color = "red";
+    return;
+  }
 
-      const data = await res.json();
-       if (res.ok) {
-      message.textContent = " Success! " + data.message;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    message.textContent = "⚠️ Please enter a valid email address.";
+    message.style.color = "red";
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
+
+  try {
+    const res = await fetch(ENV.WAITLIST_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ role, email }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      message.textContent =
+        " Success! " + (data.message || "You've joined the waitlist.");
       message.style.color = "green";
+      form.reset();
+    } else if (data.message && data.message.toLowerCase().includes("exists")) {
+      message.textContent = "⚠️ This email is already on the waitlist.";
+      message.style.color = "orange";
     } else {
-      message.textContent =  (data.message || "Something went wrong");
+      message.textContent =
+        "❌ Error: " + (data.message || "Something went wrong.");
       message.style.color = "red";
     }
-    } catch (err) {
-      console.error(err);
-      alert(" Something went wrong. Try again.");
-    }
-  });
-  
+  } catch (err) {
+    console.error(err);
+    message.textContent = "❌ Network error. Please try again later.";
+    message.style.color = "red";
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Join Waitlist";
+  }
+});
