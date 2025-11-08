@@ -14,7 +14,7 @@ form.addEventListener("submit", async (e) => {
     }
 
     try {
-      const res = await fetch("https://scahwaitist.onrender.com/api/waitlist", {
+      const res = await fetch("https://scahtest1-production.up.railway.app/API/waitlist", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -27,7 +27,7 @@ form.addEventListener("submit", async (e) => {
       message.textContent = " Success! " + data.message;
       message.style.color = "green";
     } else {
-      message.textContent = " Error: " + (data.message || "Something went wrong");
+      message.textContent =  (data.message || "Something went wrong");
       message.style.color = "red";
     }
     } catch (err) {
@@ -35,3 +35,4 @@ form.addEventListener("submit", async (e) => {
       alert(" Something went wrong. Try again.");
     }
   });
+  
